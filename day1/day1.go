@@ -18,10 +18,8 @@ func main() {
 		switch char {
 		case up:
 			floor++
-			break
 		case down:
 			floor--
-			break
 		}
 
 		if floor == -1 {
