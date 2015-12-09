@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	input := advent.ReadInput("day2")
+	input := advent.ReadInput()
 
 	var totalPaper, totalRibbon int
 

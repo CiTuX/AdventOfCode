@@ -9,7 +9,7 @@ const up, down = '(', ')'
 
 func main() {
 
-	input := advent.ReadInput("day1")
+	input := advent.ReadInput()
 
 	var floor int
 

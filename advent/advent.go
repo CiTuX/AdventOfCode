@@ -2,6 +2,8 @@ package advent
 
 import (
 	"io/ioutil"
+	"runtime"
+	"path"
 )
 
 func check(e error) {
@@ -10,11 +12,14 @@ func check(e error) {
 	}
 }
 
-func ReadInput(day string) (string) {
-	dat, err := ioutil.ReadFile(day + "/input.txt")
-	check(err)
+func ReadInput() (input string) {
+	_, file, _, ok := runtime.Caller(1)
+	if (ok) {
+		dir, _ := path.Split(file)
+		dat, err := ioutil.ReadFile(dir + "input.txt")
 
-	input := string(dat)
-
-	return input
+		check(err)
+		input = string(dat)
+	}
+	return
 }

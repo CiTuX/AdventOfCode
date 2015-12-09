@@ -12,7 +12,7 @@ type Position struct {
 }
 
 func main() {
-	input := advent.ReadInput("day3")
+	input := advent.ReadInput()
 	part1(input)
 	part2(input)
 }
