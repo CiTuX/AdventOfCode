@@ -17,24 +17,6 @@ func main() {
 	part2(input)
 }
 
-func changePosition(char rune, x, y int) (int, int) {
-	switch char {
-	case north:
-		y++
-		break
-	case south:
-		y--
-		break
-	case east:
-		x--
-		break
-	case west:
-		x++
-		break
-	}
-	return x, y
-}
-
 func part1(input string) {
 	presents := make(map[Position]int)
 
@@ -80,4 +62,22 @@ func part2(input string) {
 	}
 
 	fmt.Print("\nPart 2: ", len(presents))
+}
+
+func changePosition(char rune, x, y int) (int, int) {
+	switch char {
+	case north:
+		y++
+		break
+	case south:
+		y--
+		break
+	case east:
+		x--
+		break
+	case west:
+		x++
+		break
+	}
+	return x, y
 }
