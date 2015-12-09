@@ -8,15 +8,26 @@ import (
 )
 
 const input = "ckczppom"
-const requirement = "00000"
 
 var inputBytes = []byte(input)
 
 func main() {
 	part1()
+	fmt.Print("\n\n")
+	part2()
 }
 
 func part1() {
+	fmt.Print("Part 1")
+	findHash("00000")
+}
+
+func part2() {
+	fmt.Print("Part 2")
+	findHash("000000")
+}
+
+func findHash(requirement string) {
 	var hash string
 
 	count := int64(0)
@@ -27,5 +38,5 @@ func part1() {
 		hasher.Write(strconv.AppendInt(inputBytes, count, 10))
 		hash = hex.EncodeToString(hasher.Sum(nil))
 	}
-	fmt.Print(count, "\n", hash)
+	fmt.Printf("\nCount: %d\nHash: %s", count, hash)
 }
