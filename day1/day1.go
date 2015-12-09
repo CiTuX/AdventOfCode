@@ -5,7 +5,7 @@ import (
 	"../advent"
 )
 
-var up, down rune = '(', ')'
+const up, down = '(', ')'
 
 func main() {
 
