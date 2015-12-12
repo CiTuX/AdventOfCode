@@ -10,6 +10,7 @@ import (
 
 const turn, on, off, toggle, through, separator = "turn", "on", "off", "toggle", "through", ","
 
+var lines []string
 var theLight [1000][1000]bool
 var theBright [1000][1000]int
 
@@ -23,13 +24,14 @@ type Coords struct {
 
 func main() {
 	input := advent.ReadInput()
-	part1(input)
+	lines = advent.ParseLines(input)
+	part1()
 	fmt.Print("\n\n")
-	part2(input)
+	part2()
 }
 
-func part1(input string) {
-	for _, line := range strings.Split(input, "\n") {
+func part1() {
+	for _, line := range lines {
 		if line != "" {
 			coords := parseCoords(line)
 			state := parseState(line)
@@ -50,8 +52,8 @@ func part1(input string) {
 	fmt.Print("Part 1: ", counter)
 }
 
-func part2(input string) {
-	for _, line := range strings.Split(input, "\n") {
+func part2() {
+	for _, line := range lines {
 		if line != "" {
 			coords := parseCoords(line)
 			state := parseState(line)

@@ -13,7 +13,7 @@ func main() {
 
 	var totalPaper, totalRibbon int
 
-	for _, entry := range strings.Split(input, "\n") {
+	for _, entry := range advent.ParseLines(input) {
 		values := strings.Split(entry, "x")
 		if (len(values) == 3) {
 			paper, ribbon := calcEntry(values)

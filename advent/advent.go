@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"runtime"
 	"path"
+	"strings"
 )
 
 func check(e error) {
@@ -22,4 +23,12 @@ func ReadInput() (input string) {
 		input = string(dat)
 	}
 	return
+}
+
+func ParseLines(input string) []string {
+	lines := strings.Split(input, "\n")
+	for i := 0; i < len(lines); i++ {
+		lines[i] = strings.TrimSpace(lines[i])
+	}
+	return lines
 }
