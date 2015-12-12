@@ -27,8 +27,8 @@ func ReadInput() (input string) {
 
 func ParseLines(input string) []string {
 	lines := strings.Split(input, "\n")
-	for i := 0; i < len(lines); i++ {
-		lines[i] = strings.TrimSpace(lines[i])
+	for index, line := range lines {
+		lines[index] = strings.TrimSpace(line)
 	}
 	return lines
 }
