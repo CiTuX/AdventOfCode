@@ -7,19 +7,20 @@ import (
 	"../advent"
 )
 
+var lines []string
 var vowels = []string{"a", "e", "i", "o", "u"}
 var blacklist = []string{"ab", "cd", "pq", "xy"}
 
 func main() {
-	input := advent.ReadInput()
-	part1(input)
+	lines = advent.ReadLines()
+	part1()
 	fmt.Print("\n\n")
-	part2(input)
+	part2()
 }
 
-func part1(input string) {
+func part1() {
 	var count int
-	for _, line := range strings.Split(input, "\n") {
+	for _, line := range lines {
 		if checkWordSimpel(line) {
 			count++
 		}
@@ -27,9 +28,9 @@ func part1(input string) {
 	fmt.Print("Part1: ", count)
 }
 
-func part2(input string) {
+func part2() {
 	var count int
-	for _, line := range strings.Split(input, "\n") {
+	for _, line := range lines {
 		if checkWordKomplex(line) {
 			count++
 		}

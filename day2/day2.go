@@ -9,11 +9,9 @@ import (
 )
 
 func main() {
-	input := advent.ReadInput()
-
 	var totalPaper, totalRibbon int
 
-	for _, entry := range advent.ParseLines(input) {
+	for _, entry := range advent.ReadLines() {
 		values := strings.Split(entry, "x")
 		if (len(values) == 3) {
 			paper, ribbon := calcEntry(values)

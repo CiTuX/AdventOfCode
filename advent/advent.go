@@ -13,16 +13,27 @@ func check(e error) {
 	}
 }
 
-func ReadInput() (input string) {
-	_, file, _, ok := runtime.Caller(1)
+func getFile() string {
+	_, file, _, ok := runtime.Caller(2)
 	if (ok) {
 		dir, _ := path.Split(file)
-		dat, err := ioutil.ReadFile(dir + "input.txt")
-
-		check(err)
-		input = string(dat)
+		return dir + "input.txt"
 	}
-	return
+	return ""
+}
+
+func readInput(file string) string {
+	dat, err := ioutil.ReadFile(file)
+	check(err)
+	return string(dat)
+}
+
+func ReadInput() string {
+	return readInput(getFile())
+}
+
+func ReadLines() []string {
+	return ParseLines(readInput(getFile()))
 }
 
 func ParseLines(input string) []string {
