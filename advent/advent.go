@@ -37,9 +37,11 @@ func ReadLines() []string {
 }
 
 func ParseLines(input string) []string {
-	lines := strings.Split(input, "\n")
-	for index, line := range lines {
-		lines[index] = strings.TrimSpace(line)
+	var lines []string
+	for _, line := range strings.Split(input, "\n") {
+		if line = strings.TrimSpace(line); len(line) > 1 {
+			lines = append(lines, line)
+		}
 	}
 	return lines
 }
