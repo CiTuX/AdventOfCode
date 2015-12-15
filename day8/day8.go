@@ -3,19 +3,36 @@ package main
 import (
 	"fmt"
 	"../advent"
+	"strconv"
 )
 
-var lines []string
+var input string
 
 func part1() {
-	fmt.Print(lines)
+	var chars []rune
+	var totalNumber int
+
+	for _, char := range input {
+		if (char != '\n') {
+			chars = append(chars, char)
+		}else {
+			if line, err := strconv.Unquote(string(chars)); err == nil {
+				code := len(chars)
+				memory := len(line)
+				totalNumber += code - memory
+			}
+			chars = []rune{} //Reset
+		}
+	}
+
+	fmt.Print("Part 1: ", totalNumber)
 }
 
 func part2() {
 }
 
 func main() {
-	lines = advent.ReadLines()
+	input = advent.ReadInput()
 	part1()
 	fmt.Print("\n\n")
 	part2()
