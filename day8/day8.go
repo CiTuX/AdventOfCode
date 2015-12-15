@@ -29,6 +29,21 @@ func part1() {
 }
 
 func part2() {
+	var chars []rune
+	var totalNumber int
+
+	for _, char := range input {
+		if (char != '\n') {
+			chars = append(chars, char)
+		}else {
+			memory := len(strconv.Quote(string(chars)))
+			code := len(chars)
+			totalNumber += memory - code
+			chars = []rune{} //Reset
+		}
+	}
+
+	fmt.Print("Part 2: ", totalNumber)
 }
 
 func main() {
