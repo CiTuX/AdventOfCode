@@ -147,6 +147,21 @@ func part1() {
 }
 
 func part2() {
+	a := signals["a"]
+	signals = make(map[string]uint16, 100)
+	signals["b"] = a
+
+	var success = make(map[int]bool)
+	for len(success) < len(commands) - 1 {
+		for index, operation := range commands {
+			if (!success[index]) {
+				if (operation.Execute(lines[index])) {
+					success[index] = true
+				}
+			}
+		}
+	}
+	fmt.Print("Part 2: ", signals["a"])
 }
 
 func main() {
