@@ -9,20 +9,16 @@ fun main(args: Array<String>) {
 class CaptchaSolver {
     fun solve(captcha: String): Int {
         val numbers = mapString(captcha)
-        var sum = 0
         var total = 0
-        var lastNumber = -1
-        for (i in IntRange(0, numbers.size)) {
-            val number = numbers[if (i == numbers.size) 0 else i]
-            if (number == lastNumber) {
-                sum += number
-            } else {
-                total += sum
-                sum = 0
+        for (i in 0 until numbers.size) {
+            val a = numbers[i]
+            val j = (i + numbers.size / 2) % numbers.size
+            val b = numbers[j]
+            if (a == b) {
+                total += a
             }
-            lastNumber = number
+
         }
-        total += sum
         return total
     }
 
