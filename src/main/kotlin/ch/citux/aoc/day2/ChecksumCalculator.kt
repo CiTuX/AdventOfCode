@@ -1,10 +1,10 @@
 package ch.citux.aoc.day2
 
+import ch.citux.aoc.util.openRessource
 import java.io.File
 
 fun main(args: Array<String>) {
-    val captchaSolver = ChecksumCalculator()
-    val input = File(captchaSolver.javaClass.getResource("/day2.txt").file)
+    val input = openRessource("/day2.txt")
     print(ChecksumCalculator().checkSpreadsheet(input))
 }
 
