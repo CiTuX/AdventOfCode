@@ -10,36 +10,36 @@ object ChecksumCalculatorSpek : Spek({
     given("a checksum calculator") {
         val checksumCalculator = ChecksumCalculator()
 
-        on("5 1 9 5") {
-            val checksum = checksumCalculator.calculateChecksum(5, 1, 9, 5)
-            it("The first row's largest and smallest values are 9 and 1, and their difference is 8.") {
-                assertEquals(8, checksum)
-            }
-        }
-
-        on("7 5 3") {
-            val checksum = checksumCalculator.calculateChecksum(7, 5, 3)
-            it("The second row's largest and smallest values are 7 and 3, and their difference is 4.") {
+        on("5 9 2 8") {
+            val checksum = checksumCalculator.calculateChecksum(5, 9, 2, 8)
+            it("In the first row, the only two numbers that evenly divide are 8 and 2; the result of this division is 4.") {
                 assertEquals(4, checksum)
             }
         }
 
-        on("2 4 6 8") {
-            val checksum = checksumCalculator.calculateChecksum(2, 4, 6, 8)
-            it("The third row's difference is 6.") {
-                assertEquals(6, checksum)
+        on("9 4 7 3") {
+            val checksum = checksumCalculator.calculateChecksum(9, 4, 7, 3)
+            it("In the second row, the two numbers are 9 and 3; the result is 3.") {
+                assertEquals(3, checksum)
             }
         }
 
-        on("8 + 4 + 6 = 18") {
+        on("3 8 6 5") {
+            val checksum = checksumCalculator.calculateChecksum(3, 8, 6, 5)
+            it("In the third row, the result is 2.") {
+                assertEquals(2, checksum)
+            }
+        }
+
+        on("4 + 3 + 2 = 9") {
             val spreadsheet = """
-                5 1 9 5
-                7 5 3
-                2 4 6 8
+                5 9 2 8
+                9 4 7 3
+                3 8 6 5
                 """
             val checksum = spreadsheet.lines().sumBy { checksumCalculator.calculateChecksum(it) }
-            it("In this example, the spreadsheet's checksum would be 8 + 4 + 6 = 18.") {
-                assertEquals(18, checksum)
+            it("In this example, the sum of the results would be 4 + 3 + 2 = 9.") {
+                assertEquals(9, checksum)
             }
         }
     }

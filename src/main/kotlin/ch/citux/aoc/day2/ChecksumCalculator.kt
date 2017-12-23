@@ -23,10 +23,12 @@ class ChecksumCalculator {
     }
 
     fun calculateChecksum(vararg numbers: Int): Int {
-        val min = numbers.min()
-        val max = numbers.max()
-        if (min != null && max != null) {
-            return max - min
+        for (a in numbers) {
+            for (b in numbers) {
+                if (a != b && a % b == 0) {
+                    return a / b
+                }
+            }
         }
         return 0
     }
