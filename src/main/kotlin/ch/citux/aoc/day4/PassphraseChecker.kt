@@ -21,10 +21,19 @@ class PassphraseChecker {
     }
 
     fun check(phrase: String): Boolean {
-        val wordList = ArrayList<CharSequence>()
+        val wordList = ArrayList<String>()
         for (word in phrase.splitToSequence(" ")) {
-            if (wordList.contains(word)) {
-                return false
+            for (entry in wordList) {
+                if (entry.length == word.length) {
+                    val wordChars = word.toCharArray()
+                    val entryChars = entry.toCharArray()
+                    wordChars.sort()
+                    entryChars.sort()
+
+                    if (wordChars.contentEquals(entryChars)) {
+                        return false
+                    }
+                }
             }
             wordList.add(word)
         }
