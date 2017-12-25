@@ -37,13 +37,13 @@ dependencies {
 
     testCompile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
-    testCompile ('org.jetbrains.spek:spek-api:1.1.5') {
+    testCompile('org.jetbrains.spek:spek-api:1.1.5') {
         exclude group: 'org.jetbrains.kotlin'
     }
-    testRuntime ('org.jetbrains.spek:spek-junit-platform-engine:1.1.5') {
-        exclude group: 'org.junit.platform'
+    testCompile('org.jetbrains.spek:spek-junit-platform-engine:1.1.5') {
         exclude group: 'org.jetbrains.kotlin'
     }
+    testCompile 'org.junit.platform:junit-platform-engine:1.0.0'
 }
 
 compileKotlin {
