@@ -19,20 +19,18 @@ pub fn main() !void {
     }
 
     const input = @embedFile("input.txt");
-    const result = calculateTotalDistance(input, allocator);
+    var pairs = ArrayList(Pair).init(allocator);
+    defer pairs.deinit();
+
+    parseInput(input, &pairs) catch {};
+
+    const result = calculateTotalDistance(pairs, allocator);
     const stdout = std.io.getStdOut().writer();
 
     try stdout.print("{}", .{result});
 }
 
-fn calculateTotalDistance(input: []const u8, allocator: Allocator) u32 {
-    var pairs = ArrayList(Pair).init(allocator);
-    defer pairs.deinit();
-
-    parseInput(input, &pairs) catch {
-        return 0;
-    };
-
+fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
     var lefts = ArrayList(i32).init(allocator);
     var rights = ArrayList(i32).init(allocator);
     defer lefts.deinit();
@@ -55,6 +53,10 @@ fn calculateTotalDistance(input: []const u8, allocator: Allocator) u32 {
     }
 
     return result;
+}
+
+fn calculateTotalSimilarity(pairs: ArrayList(Pair)) u32 {
+    return @intCast(pairs.items.len);
 }
 
 fn parseInput(input: []const u8, pairs: *ArrayList(Pair)) !void {
@@ -116,22 +118,40 @@ fn sort(list: *ArrayList(i32)) !void {
     std.mem.sort(i32, list.items, {}, comptime std.sort.asc(i32));
 }
 
+const exampleInput =
+    \\3   4
+    \\4   3
+    \\2   5
+    \\1   3
+    \\3   9
+    \\3   3
+    \\
+;
+
 test "example part 1" {
-    const input =
-        \\3   4
-        \\4   3
-        \\2   5
-        \\1   3
-        \\3   9
-        \\3   3
-        \\
-    ;
-    const result = calculateTotalDistance(input, test_allocator);
+    var pairs = ArrayList(Pair).init(test_allocator);
+    defer pairs.deinit();
+    parseInput(exampleInput, &pairs) catch {};
+
+    const result = calculateTotalDistance(pairs, test_allocator);
+
     try std.testing.expectEqual(11, result);
+}
+
+test "example part 2" {
+    var pairs = ArrayList(Pair).init(test_allocator);
+    defer pairs.deinit();
+    parseInput(exampleInput, &pairs) catch {};
+
+    const result = calculateTotalSimilarity(pairs);
+
+    try std.testing.expectEqual(31, result);
 }
 
 test "joinNumber" {
     const number = [_]u8{ 8, 8, 1, 5, 9 };
+
     const result = joinNumber(number[0..]);
+
     try std.testing.expectEqual(88159, result);
 }
