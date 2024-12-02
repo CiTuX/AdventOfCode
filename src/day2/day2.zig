@@ -5,17 +5,18 @@ const parseInt = std.fmt.parseInt;
 const tokenizeScalar = std.mem.tokenizeScalar;
 
 const Direction = enum { increasing, decreasing, undefined };
+const ProblemDampener = enum { on, off };
 
 pub fn main() !void {
     const input = @embedFile("input.txt");
 
-    const part1 = try countSafeReports(input);
+    const part1 = try countSafeReports(input, .off);
 
     const stdout = std.io.getStdOut().writer();
     try stdout.print("{}\n", .{part1});
 }
 
-fn countSafeReports(input: []const u8) !u32 {
+fn countSafeReports(input: []const u8, _: ProblemDampener) !u32 {
     var result: u32 = 0;
 
     var lineIterator = tokenizeScalar(u8, input, '\n');
@@ -81,9 +82,15 @@ const exampleInput =
 ;
 
 test "example part 1" {
-    const result = countSafeReports(exampleInput);
+    const result = countSafeReports(exampleInput, .off);
 
     try expectEqual(2, result);
+}
+
+test "example part 2" {
+    const result = countSafeReports(exampleInput, .on);
+
+    try expectEqual(4, result);
 }
 
 test "checkLevelDifference" {
