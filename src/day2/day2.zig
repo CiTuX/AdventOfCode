@@ -1,10 +1,19 @@
 const std = @import("std");
-const charToDigit = std.fmt.charToDigit;
 const expect = std.testing.expect;
 const expectEqual = std.testing.expectEqual;
+const parseInt = std.fmt.parseInt;
 const tokenizeScalar = std.mem.tokenizeScalar;
 
 const Direction = enum { increasing, decreasing, undefined };
+
+pub fn main() !void {
+    const input = @embedFile("input.txt");
+
+    const part1 = try countSafeReports(input);
+
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("{}\n", .{part1});
+}
 
 fn countSafeReports(input: []const u8) !u32 {
     var result: u32 = 0;
@@ -17,14 +26,18 @@ fn countSafeReports(input: []const u8) !u32 {
         var levelIterator = tokenizeScalar(u8, line, ' ');
 
         while (levelIterator.next()) |level| {
-            const currentLevel = try charToDigit(level[0], 10);
+            const currentLevel = try parseInt(u32, level, 10);
 
             if (previousLevel != 0) {
+                var safeDirection = Direction.undefined;
+
                 if (currentLevel >= previousLevel) {
-                    safe = checkIncrease(&direction, previousLevel, currentLevel);
+                    safeDirection = .increasing;
                 } else if (currentLevel <= previousLevel) {
-                    safe = checkDecrease(&direction, previousLevel, currentLevel);
+                    safeDirection = .decreasing;
                 }
+
+                safe = checkDirection(&direction, safeDirection, previousLevel, currentLevel);
             }
 
             if (!safe) break;
@@ -39,34 +52,17 @@ fn countSafeReports(input: []const u8) !u32 {
     return result;
 }
 
-fn checkIncrease(direction: *Direction, previous: u32, current: u32) bool {
-    switch (direction.*) {
-        .undefined => {
-            direction.* = .increasing;
-            return checkIncrease(direction, previous, current);
-        },
-        .decreasing => {
-            return false;
-        },
-        .increasing => {
-            return checkLevelDifference(previous, current);
-        },
+fn checkDirection(direction: *Direction, safeDirection: Direction, previous: u32, current: u32) bool {
+    if (direction.* == .undefined) {
+        direction.* = safeDirection;
+        return checkDirection(direction, safeDirection, previous, current);
     }
-}
 
-fn checkDecrease(direction: *Direction, previous: u32, current: u32) bool {
-    switch (direction.*) {
-        .undefined => {
-            direction.* = .decreasing;
-            return checkDecrease(direction, previous, current);
-        },
-        .increasing => {
-            return false;
-        },
-        .decreasing => {
-            return checkLevelDifference(previous, current);
-        },
+    if (direction.* == safeDirection) {
+        return checkLevelDifference(previous, current);
     }
+
+    return false;
 }
 
 fn checkLevelDifference(x: u32, y: u32) bool {
@@ -98,14 +94,14 @@ test "checkLevelDifference" {
     try expect(!checkLevelDifference(4, 4));
 }
 
-test "checkIncrease" {
+test "checkDirection increasing" {
     var direction = Direction.undefined;
-    try expect(checkIncrease(&direction, 6, 4));
+    try expect(checkDirection(&direction, .increasing, 1, 3));
     try expectEqual(Direction.increasing, direction);
 }
 
-test "checkDecrease" {
+test "checkDirection decreasing" {
     var direction = Direction.undefined;
-    try expect(checkDecrease(&direction, 6, 4));
+    try expect(checkDirection(&direction, .decreasing, 6, 4));
     try expectEqual(Direction.decreasing, direction);
 }
