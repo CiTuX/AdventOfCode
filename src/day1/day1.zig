@@ -5,7 +5,7 @@ const expect = std.testing.expect;
 const Allocator = std.mem.Allocator;
 const test_allocator = std.testing.allocator;
 
-const Pair = struct { left: i32, right: i32 };
+const Pair = struct { left: u32, right: u32 };
 const char_space = ' ';
 const char_eol = '\n';
 const ascii_offset = 48;
@@ -31,8 +31,9 @@ pub fn main() !void {
 }
 
 fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
-    var lefts = ArrayList(i32).init(allocator);
-    var rights = ArrayList(i32).init(allocator);
+    var result: u32 = 0;
+    var lefts = ArrayList(u32).init(allocator);
+    var rights = ArrayList(u32).init(allocator);
     defer lefts.deinit();
     defer rights.deinit();
 
@@ -44,19 +45,37 @@ fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
     sort(&lefts) catch {};
     sort(&rights) catch {};
 
-    var result: u32 = 0;
     for (0..lefts.items.len) |i| {
         const left = lefts.items[i];
         const right = rights.items[i];
 
-        result += @abs(left - right);
+        result += @abs(@max(left, right) - @min(left, right));
     }
 
     return result;
 }
 
-fn calculateTotalSimilarity(pairs: ArrayList(Pair)) u32 {
-    return @intCast(pairs.items.len);
+fn calculateTotalSimilarity(pairs: ArrayList(Pair), allocator: Allocator) !u32 {
+    var result: u32 = 0;
+    var similarities = std.AutoHashMap(u32, u32).init(allocator);
+    defer similarities.deinit();
+
+    // count right numbers
+    for (pairs.items) |pair| {
+        const item = try similarities.getOrPut(pair.right);
+        if (!item.found_existing) {
+            item.value_ptr.* = 0;
+        }
+        item.value_ptr.* += 1;
+    }
+
+    // find similarity for left numbers
+    for (pairs.items) |pair| {
+        const similarity = similarities.get(pair.left) orelse 0;
+        result += @as(u32, pair.left) * similarity;
+    }
+
+    return result;
 }
 
 fn parseInput(input: []const u8, pairs: *ArrayList(Pair)) !void {
@@ -101,21 +120,20 @@ fn addPair(pairs: *ArrayList(Pair), left: []const u8, right: []const u8) !void {
     });
 }
 
-fn joinNumber(number: []const u8) !i32 {
-    var result: i32 = 0;
+fn joinNumber(number: []const u8) !u32 {
+    var result: u32 = 0;
     const len = number.len;
 
     for (number, 0..) |digit, i| {
-        const base = std.math.pow(i32, 10, @intCast(len - i - 1));
-        // std.debug.print("{} {} {}\n", .{ i, base, digit });
+        const base = std.math.pow(u32, 10, @intCast(len - i - 1));
         result += base * digit;
     }
 
     return result;
 }
 
-fn sort(list: *ArrayList(i32)) !void {
-    std.mem.sort(i32, list.items, {}, comptime std.sort.asc(i32));
+fn sort(list: *ArrayList(u32)) !void {
+    std.mem.sort(u32, list.items, {}, comptime std.sort.asc(u32));
 }
 
 const exampleInput =
@@ -143,7 +161,7 @@ test "example part 2" {
     defer pairs.deinit();
     parseInput(exampleInput, &pairs) catch {};
 
-    const result = calculateTotalSimilarity(pairs);
+    const result = calculateTotalSimilarity(pairs, test_allocator);
 
     try std.testing.expectEqual(31, result);
 }
