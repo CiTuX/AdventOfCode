@@ -1,17 +1,22 @@
 const std = @import("std");
-const ArrayList = std.ArrayList;
-const testing = std.testing;
-const expect = std.testing.expect;
 const Allocator = std.mem.Allocator;
+const ArrayList = std.ArrayList;
+const AutoHashMap = std.AutoHashMap;
+const GeneralPurposeAllocator = std.heap.GeneralPurposeAllocator;
+const asc = std.sort.asc;
+const charToDigit = std.fmt.charToDigit;
+const expect = std.testing.expect;
+const expectEqual = std.testing.expectEqual;
+const sort = std.mem.sort;
 const test_allocator = std.testing.allocator;
+const testing = std.testing;
 
 const Pair = struct { left: u32, right: u32 };
 const char_space = ' ';
 const char_eol = '\n';
-const ascii_offset = 48;
 
 pub fn main() !void {
-    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    var gpa = GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer {
         const deinit_status = gpa.deinit();
@@ -43,14 +48,14 @@ fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
         rights.append(pair.right) catch {};
     }
 
-    sort(&lefts) catch {};
-    sort(&rights) catch {};
+    sortAsc(&lefts) catch {};
+    sortAsc(&rights) catch {};
 
     for (0..lefts.items.len) |i| {
         const left = lefts.items[i];
         const right = rights.items[i];
 
-        result += @abs(@max(left, right) - @min(left, right));
+        result += @max(left, right) - @min(left, right);
     }
 
     return result;
@@ -58,7 +63,7 @@ fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
 
 fn calculateTotalSimilarity(pairs: ArrayList(Pair), allocator: Allocator) u32 {
     var result: u32 = 0;
-    var similarities = std.AutoHashMap(u32, u32).init(allocator);
+    var similarities = AutoHashMap(u32, u32).init(allocator);
     defer similarities.deinit();
 
     // count right numbers
@@ -105,10 +110,10 @@ fn parseInput(input: []const u8, pairs: *ArrayList(Pair)) !void {
 
             else => {
                 if (!tab) {
-                    left[leftIndex] = try std.fmt.charToDigit(value, 10);
+                    left[leftIndex] = try charToDigit(value, 10);
                     leftIndex += 1;
                 } else {
-                    right[rightIndex] = try std.fmt.charToDigit(value, 10);
+                    right[rightIndex] = try charToDigit(value, 10);
                     rightIndex += 1;
                 }
             },
@@ -135,8 +140,8 @@ fn joinNumber(number: []const u8) !u32 {
     return result;
 }
 
-fn sort(list: *ArrayList(u32)) !void {
-    std.mem.sort(u32, list.items, {}, comptime std.sort.asc(u32));
+fn sortAsc(list: *ArrayList(u32)) !void {
+    sort(u32, list.items, {}, comptime asc(u32));
 }
 
 const exampleInput =
@@ -156,7 +161,7 @@ test "example part 1" {
 
     const result = calculateTotalDistance(pairs, test_allocator);
 
-    try std.testing.expectEqual(11, result);
+    try expectEqual(11, result);
 }
 
 test "example part 2" {
@@ -166,7 +171,7 @@ test "example part 2" {
 
     const result = calculateTotalSimilarity(pairs, test_allocator);
 
-    try std.testing.expectEqual(31, result);
+    try expectEqual(31, result);
 }
 
 test "joinNumber" {
@@ -174,5 +179,5 @@ test "joinNumber" {
 
     const result = joinNumber(number[0..]);
 
-    try std.testing.expectEqual(88159, result);
+    try expectEqual(88159, result);
 }
