@@ -24,10 +24,11 @@ pub fn main() !void {
 
     parseInput(input, &pairs) catch {};
 
-    const result = calculateTotalDistance(pairs, allocator);
-    const stdout = std.io.getStdOut().writer();
+    const part1 = calculateTotalDistance(pairs, allocator);
+    const part2 = calculateTotalSimilarity(pairs, allocator);
 
-    try stdout.print("{}", .{result});
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("{}\n{}\n", .{ part1, part2 });
 }
 
 fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
@@ -55,14 +56,16 @@ fn calculateTotalDistance(pairs: ArrayList(Pair), allocator: Allocator) u32 {
     return result;
 }
 
-fn calculateTotalSimilarity(pairs: ArrayList(Pair), allocator: Allocator) !u32 {
+fn calculateTotalSimilarity(pairs: ArrayList(Pair), allocator: Allocator) u32 {
     var result: u32 = 0;
     var similarities = std.AutoHashMap(u32, u32).init(allocator);
     defer similarities.deinit();
 
     // count right numbers
     for (pairs.items) |pair| {
-        const item = try similarities.getOrPut(pair.right);
+        const item = similarities.getOrPut(pair.right) catch {
+            return 0;
+        };
         if (!item.found_existing) {
             item.value_ptr.* = 0;
         }
