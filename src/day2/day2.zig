@@ -1,66 +1,102 @@
 const std = @import("std");
+const Allocator = std.mem.Allocator;
+const ArrayList = std.ArrayList;
+const GeneralPurposeAllocator = std.heap.GeneralPurposeAllocator;
+const TokenIterator = std.mem.TokenIterator;
 const expect = std.testing.expect;
 const expectEqual = std.testing.expectEqual;
 const parseInt = std.fmt.parseInt;
+const test_allocator = std.testing.allocator;
 const tokenizeScalar = std.mem.tokenizeScalar;
 
 const Direction = enum { increasing, decreasing, undefined };
 const ProblemDampener = enum { on, off };
 
 pub fn main() !void {
-    const input = @embedFile("input.txt");
-
-    const part1 = try countSafeReports(input, .off);
-
-    const stdout = std.io.getStdOut().writer();
-    try stdout.print("{}\n", .{part1});
-}
-
-fn countSafeReports(input: []const u8, _: ProblemDampener) !u32 {
-    var result: u32 = 0;
-
-    var lineIterator = tokenizeScalar(u8, input, '\n');
-    while (lineIterator.next()) |line| {
-        var safe = true;
-        var previousLevel: u32 = 0;
-        var direction = Direction.undefined;
-        var levelIterator = tokenizeScalar(u8, line, ' ');
-
-        while (levelIterator.next()) |level| {
-            const currentLevel = try parseInt(u32, level, 10);
-
-            if (previousLevel != 0) {
-                var safeDirection = Direction.undefined;
-
-                if (currentLevel >= previousLevel) {
-                    safeDirection = .increasing;
-                } else if (currentLevel <= previousLevel) {
-                    safeDirection = .decreasing;
-                }
-
-                safe = checkDirection(&direction, safeDirection, previousLevel, currentLevel);
-            }
-
-            if (!safe) break;
-            previousLevel = currentLevel;
-        }
-
-        if (safe) {
-            result += 1;
-        }
+    var gpa = GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
+    defer {
+        const deinit_status = gpa.deinit();
+        if (deinit_status == .leak) expect(false) catch @panic("TEST FAIL");
     }
 
+    const input = @embedFile("input.txt");
+    const part1 = try countSafeReports(input, allocator, .off);
+    const part2 = try countSafeReports(input, allocator, .on);
+
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("{}\n{}\n", .{ part1, part2 });
+}
+
+fn countSafeReports(input: []const u8, allocator: Allocator, problemDampener: ProblemDampener) !u32 {
+    var result: u32 = 0;
+    var lineIterator = tokenizeScalar(u8, input, '\n');
+
+    while (lineIterator.next()) |line| {
+        const safe = try iterateLevels(line, allocator, problemDampener);
+        if (safe) result += 1;
+    }
     return result;
 }
 
-fn checkDirection(direction: *Direction, safeDirection: Direction, previous: u32, current: u32) bool {
+fn iterateLevels(line: []const u8, allocator: Allocator, problemDampener: ProblemDampener) !bool {
+    var direction = Direction.undefined;
+    var tokenIterator = tokenizeScalar(u8, line, ' ');
+    var level = ArrayList(u8).init(allocator);
+    defer level.deinit();
+
+    while (tokenIterator.next()) |token| {
+        const digit = try parseInt(u8, token, 10);
+        try level.append(digit);
+    }
+
+    const check = checkLevel(level.items, &direction);
+    if (!check and problemDampener == .on) {
+        for (0..level.items.len) |i| {
+            direction = .undefined;
+            var clone = try level.clone();
+            defer clone.deinit();
+
+            _ = clone.orderedRemove(i);
+            if (checkLevel(clone.items, &direction)) {
+                return true;
+            }
+        }
+    }
+    return check;
+}
+
+fn checkLevel(level: []u8, direction: *Direction) bool {
+    var windowIterator = std.mem.window(u8, level, 2, 1);
+
+    while (windowIterator.next()) |window| {
+        if (!checkWindow(window[0], window[1], direction)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn checkWindow(current: u32, next: u32, direction: *Direction) bool {
+    var safeDirection = Direction.undefined;
+
+    if (current <= next) {
+        safeDirection = .increasing;
+    } else if (current >= next) {
+        safeDirection = .decreasing;
+    }
+
+    return checkDirection(direction, safeDirection, current, next);
+}
+
+fn checkDirection(direction: *Direction, safeDirection: Direction, x: u32, y: u32) bool {
     if (direction.* == .undefined) {
         direction.* = safeDirection;
-        return checkDirection(direction, safeDirection, previous, current);
+        return checkDirection(direction, safeDirection, x, y);
     }
 
     if (direction.* == safeDirection) {
-        return checkLevelDifference(previous, current);
+        return checkLevelDifference(x, y);
     }
 
     return false;
@@ -82,13 +118,13 @@ const exampleInput =
 ;
 
 test "example part 1" {
-    const result = countSafeReports(exampleInput, .off);
+    const result = countSafeReports(exampleInput, test_allocator, .off);
 
     try expectEqual(2, result);
 }
 
 test "example part 2" {
-    const result = countSafeReports(exampleInput, .on);
+    const result = countSafeReports(exampleInput, test_allocator, .on);
 
     try expectEqual(4, result);
 }
