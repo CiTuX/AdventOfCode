@@ -63,3 +63,8 @@ test "part1" {
     try expectEqual(0, multiplyNumbers("?(12,34)", test_allocator));
     try expectEqual(0, multiplyNumbers("mul ( 2 , 4 )", test_allocator));
 }
+
+test "part2" {
+    const input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
+    try expectEqual(48, multiplyNumbers(input, test_allocator));
+}
