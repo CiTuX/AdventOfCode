@@ -36,11 +36,17 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const regex = b.dependency("regex", .{
-        .target = target,
-        .optimize = optimize,
-    });
+    const regex = b.dependency("regex", .{});
 
+    const day1 = b.addModule("day1", .{ .root_source_file = b.path("src/day1/day1.zig") });
+    const day2 = b.addModule("day2", .{ .root_source_file = b.path("src/day2/day2.zig") });
+    const day3 = b.addModule("day3", .{ .root_source_file = b.path("src/day3/day3.zig") });
+
+    day3.addImport("regex", regex.module("regex"));
+
+    exe.root_module.addImport("day1", day1);
+    exe.root_module.addImport("day2", day2);
+    exe.root_module.addImport("day3", day3);
     exe.root_module.addImport("regex", regex.module("regex"));
 
     // This declares intent for the executable to be installed into the
@@ -86,6 +92,11 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+
+    exe_unit_tests.root_module.addImport("day1", day1);
+    exe_unit_tests.root_module.addImport("day2", day2);
+    exe_unit_tests.root_module.addImport("day3", day3);
+    exe_unit_tests.root_module.addImport("regex", regex.module("regex"));
 
     const run_exe_unit_tests = b.addRunArtifact(exe_unit_tests);
 
