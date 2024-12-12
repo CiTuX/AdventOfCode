@@ -1,3 +1,13 @@
 .idea/
+# Zig
 .zig-cache/
 zig-out/
+# Elixir
+/_build/
+/cover/
+/deps/
+/doc/
+/.fetch
+erl_crash.dump
+*.ez
+/tmp/
