@@ -45,7 +45,7 @@ defmodule Day4.Test do
       ["X", "S", "M", "S"]
     ]
 
-    result = Day4.Part1.count_diagonal(window)
+    result = Day4.count_diagonal(window, Day4.Part1.word_vectors())
     assert result == 2
   end
 
@@ -57,7 +57,7 @@ defmodule Day4.Test do
       ["S", "S", "M", "X"]
     ]
 
-    result = Day4.Part1.count_diagonal(window)
+    result = Day4.count_diagonal(window, Day4.Part1.word_vectors())
     assert result == 2
   end
 end
