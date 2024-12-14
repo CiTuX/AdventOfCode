@@ -3,7 +3,7 @@ defmodule Day4Test do
 
   test "example part1" do
     input = TestHelper.read_input(__ENV__)
-    result = Day4.run(input)
+    result = Day4.word_search(input)
     assert result == 18
   end
 

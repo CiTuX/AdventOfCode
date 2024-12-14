@@ -1,18 +1,7 @@
 defmodule AdventOfCode do
-  @moduledoc """
-  Documentation for `AdventOfCode`.
-  """
+  use Application
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> AdventOfCode.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    {:ok, self()}
   end
 end
