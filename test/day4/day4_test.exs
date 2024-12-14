@@ -1,10 +1,16 @@
-defmodule Day4Test do
+defmodule Day4.Test do
   use ExUnit.Case
 
   test "example part1" do
     input = TestHelper.read_input(__ENV__)
-    result = Day4.word_search(input)
+    result = Day4.Part1.word_search(input)
     assert result == 18
+  end
+
+  test "example part2" do
+    input = TestHelper.read_input(__ENV__)
+    result = Day4.Part2.word_search(input)
+    assert result == 9
   end
 
   test "count_horizontal" do
@@ -15,7 +21,7 @@ defmodule Day4Test do
       ["S", "A", "M", "X"]
     ]
 
-    result = Day4.count_horizontal(window)
+    result = Day4.Part1.count_horizontal(window)
     assert result == 2
   end
 
@@ -27,7 +33,7 @@ defmodule Day4Test do
       ["S", "S", "M", "X"]
     ]
 
-    result = Day4.count_vertical(window)
+    result = Day4.Part1.count_vertical(window)
     assert result == 2
   end
 
@@ -39,7 +45,7 @@ defmodule Day4Test do
       ["X", "S", "M", "S"]
     ]
 
-    result = Day4.count_diagonal(window)
+    result = Day4.Part1.count_diagonal(window)
     assert result == 2
   end
 
@@ -51,7 +57,7 @@ defmodule Day4Test do
       ["S", "S", "M", "X"]
     ]
 
-    result = Day4.count_diagonal(window)
+    result = Day4.Part1.count_diagonal(window)
     assert result == 2
   end
 end
