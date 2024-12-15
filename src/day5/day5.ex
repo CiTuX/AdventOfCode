@@ -1,8 +1,4 @@
 defmodule Day5 do
-  def start(_type, _args) do
-    {:ok, self()}
-  end
-
   def validated_middle_page_sum(input) do
     [rules, updates] = String.split(input, "\n\n", trim: false) |> Enum.map(&String.split/1)
     rules = parse_rules(rules)
