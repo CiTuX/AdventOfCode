@@ -1,10 +1,17 @@
 defmodule Day5 do
   def validated_middle_page_sum(input) do
-    [rules, updates] = String.split(input, "\n\n", trim: false) |> Enum.map(&String.split/1)
-    rules = parse_rules(rules)
-    updates = parse_updates(updates)
+    [rules, updates] = parse_input(input)
     valid_updates = validate_updates(updates, rules)
     Enum.reduce(valid_updates, 0, &(get_middle_page(&1) + &2))
+  end
+
+  def fixed_middle_page_sum(input) do
+    String.length(input)
+  end
+
+  defp parse_input(input) do
+    [rules, updates] = String.split(input, "\n\n", trim: false) |> Enum.map(&String.split/1)
+    [parse_rules(rules), parse_updates(updates)]
   end
 
   defp parse_rules(rules),
