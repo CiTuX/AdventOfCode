@@ -11,6 +11,10 @@ defmodule Day6 do
     MapSet.size(visited)
   end
 
+  def count_possible_obstructions(input) do
+    String.length(input)
+  end
+
   defp find_guard(map, guard_indicator \\ "^") do
     y = Enum.find_index(map, &Enum.member?(&1, guard_indicator))
     row = Enum.at(map, y)
