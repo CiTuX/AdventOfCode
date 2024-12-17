@@ -4,12 +4,11 @@ defmodule Day6 do
   def count_distinct_positions(input) do
     parse_input(input)
     |> navigate_guard()
-    |> MapSet.size()
+    |> Enum.count()
   end
 
   def count_possible_obstructions(input) do
     parse_input(input)
-    |> then(&{&1, navigate_guard(&1)})
     |> find_extra_obstructions()
     |> Enum.count()
   end
@@ -32,7 +31,7 @@ defmodule Day6 do
   end
 
   defp find_obstructions(map) do
-    indexed_map(map) |> Enum.flat_map(&row_obstructions/1) |> Map.from_keys(MapSet.new())
+    indexed_map(map) |> Enum.flat_map(&row_obstructions/1) |> MapSet.new()
   end
 
   defp row_obstructions({row, y}, obstruction_indicator \\ "#"),
@@ -52,62 +51,52 @@ defmodule Day6 do
 
   defp navigate_guard(position, direction, map_size, obstructions, visited \\ %MapSet{}) do
     if check_bounds(position, map_size) do
-      MapSet.put(visited, position)
-      visited = MapSet.put(visited, position)
-      {direction, obstructions} = next_direction(direction, position, obstructions)
-      position = navigate(position, direction)
+      step = {position, direction}
+      loop_detection(visited, step)
+      visited = MapSet.put(visited, step)
+      {position, direction} = next(step, obstructions)
       navigate_guard(position, direction, map_size, obstructions, visited)
     else
-      visited
+      Enum.map(visited, &elem(&1, 0)) |> MapSet.new()
     end
   end
 
   defp check_bounds({x, y}, map_size),
     do: x >= 0 && x < map_size && y >= 0 && y < map_size
 
-  defp next_direction(direction, position, obstructions) do
-    next_position = navigate(position, direction)
+  defp next({position, direction}, obstructions) do
+    next_step = navigate(position, direction)
 
-    if Map.has_key?(obstructions, next_position) do
-      handle_obstruction(obstructions, next_position, direction)
+    if Enum.member?(obstructions, next_step) do
+      {position, Directions.next(direction)}
     else
-      {direction, obstructions}
+      {next_step, direction}
     end
   end
 
-  defp handle_obstruction(obstructions, next_position, direction) do
-    visited_directions = loop_detection(obstructions, next_position, direction)
-    obstructions = Map.replace(obstructions, next_position, visited_directions)
-
-    {Directions.next(direction), obstructions}
-  end
-
-  defp loop_detection(obstructions, next_position, direction) do
-    visited_directions = Map.get(obstructions, next_position)
-
-    if(MapSet.member?(visited_directions, direction)) do
+  defp loop_detection(visited, step) do
+    if(MapSet.member?(visited, step)) do
       raise RuntimeError, "Loop detected!"
-    else
-      MapSet.put(visited_directions, direction)
     end
   end
 
   defp navigate({position_x, position_y}, {direction_x, direction_y}),
     do: {position_x + direction_x, position_y + direction_y}
 
-  defp find_extra_obstructions({input, visited}), do: find_extra_obstructions(input, visited)
+  defp find_extra_obstructions(input),
+    do: navigate_guard(input) |> find_extra_obstructions(input)
 
-  defp find_extra_obstructions({map_size, guard, obstructions}, visited),
+  defp find_extra_obstructions(visited, {map_size, guard, obstructions}),
     do:
       visited
       |> MapSet.delete(guard)
-      |> Enum.filter(&find_extra_obstruction(&1, {map_size, guard, obstructions}))
+      |> Enum.filter(&find_extra_obstruction(&1, map_size, guard, obstructions))
 
-  defp find_extra_obstruction(extra_obstruction, {map_size, guard, obstructions}) do
-    extra_obstructions = Map.put(obstructions, extra_obstruction, MapSet.new())
+  defp find_extra_obstruction(possible_obstruction, map_size, guard, obstructions) do
+    obstructions = MapSet.put(obstructions, possible_obstruction)
 
     try do
-      _ = navigate_guard({map_size, guard, extra_obstructions})
+      _ = navigate_guard({map_size, guard, obstructions})
       false
     rescue
       _ in RuntimeError -> true
