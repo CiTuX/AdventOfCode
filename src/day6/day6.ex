@@ -8,7 +8,7 @@ defmodule Day6 do
     obstructions = find_obstructions(map)
     direction = Directions.initial()
     visited = navigate_guard(guard, direction, map_size, obstructions)
-    length(visited)
+    MapSet.size(visited)
   end
 
   defp find_guard(map, guard_indicator \\ "^") do
@@ -35,19 +35,20 @@ defmodule Day6 do
       |> Enum.map(&Enum.with_index/1)
       |> Enum.with_index()
 
-  defp navigate_guard(position, direction, map_size, obstructions, visited \\ []) do
+  defp navigate_guard(position, direction, map_size, obstructions, visited \\ %MapSet{}) do
     if check_bounds(position, map_size) do
-      visited = [position | visited]
+      MapSet.put(visited, position)
+      visited = MapSet.put(visited, position)
       direction = next_direction(direction, position, obstructions)
       position = navigate(position, direction)
       navigate_guard(position, direction, map_size, obstructions, visited)
     else
-      Enum.uniq(visited)
+      visited
     end
   end
 
   defp check_bounds({x, y}, map_size),
-    do: x < map_size && y < map_size
+    do: x >= 0 && x < map_size && y >= 0 && y < map_size
 
   defp next_direction(direction, position, obstructions) do
     next_position = navigate(position, direction)
