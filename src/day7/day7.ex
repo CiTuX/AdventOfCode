@@ -40,7 +40,7 @@ defmodule Day7 do
   end
 
   defp evaluate_equation_permutations(index, acc, equation, expected, operations) do
-    if acc < expected do
+    if acc <= expected do
       number = Enum.at(equation, index)
       operation = Enum.at(operations, index - 1)
       {:cont, apply(operation, [acc, number])}
