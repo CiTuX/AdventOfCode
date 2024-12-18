@@ -1,7 +1,10 @@
 defmodule Day7 do
-  def total_calibration_result(input) do
+  def part1(input), do: total_calibration_result(input, [&+/2, &*/2])
+  def part2(input), do: total_calibration_result(input, [&+/2, &*/2, &concat/2])
+
+  def total_calibration_result(input, operations) do
     parse_input(input)
-    |> Enum.map(&evaluate_equation/1)
+    |> Enum.map(fn {expected, equation} -> evaluate_equation(equation, expected, operations) end)
     |> Enum.sum()
   end
 
@@ -21,10 +24,8 @@ defmodule Day7 do
     }
   end
 
-  defp evaluate_equation({expected, equation}), do: evaluate_equation(equation, expected)
-
-  defp evaluate_equation(equation, expected) do
-    permutations = operations_permutations(length(equation) - 1)
+  defp evaluate_equation(equation, expected, operations) do
+    permutations = permutations(operations, length(equation) - 1)
     results = evaluate_equation_permutations(equation, expected, permutations)
     Enum.find(results, 0, &(&1 == expected))
   end
@@ -49,13 +50,14 @@ defmodule Day7 do
     end
   end
 
-  defp operations(), do: [&+/2, &*/2]
-
-  defp operations_permutations(count), do: permutations(operations(), count)
-
   defp permutations(_list, 0), do: [[]]
 
   defp permutations(list, count) do
     for(item <- list, rest <- permutations(list, count - 1), do: [item | rest])
+  end
+
+  def concat(left, right) do
+    exponent = right |> Integer.digits() |> length()
+    left * Integer.pow(10, exponent) + right
   end
 end
