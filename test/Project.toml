@@ -1,0 +1,3 @@
+[deps]
+AdventOfCode = "b15b3531-00fd-4bdc-993b-20f9464a0bed"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

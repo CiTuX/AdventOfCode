@@ -1,0 +1,7 @@
+name = "AdventOfCode"
+uuid = "b15b3531-00fd-4bdc-993b-20f9464a0bed"
+authors = ["Paul Stöhr"]
+version = "0.1.0"
+
+[workspace]
+projects = ["test"]
