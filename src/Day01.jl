@@ -6,10 +6,8 @@ export part1
 dial = 50
 counter = 0
 
-function part1(input::String)
-    instructions = split(chomp(input), '\n')
-
-    for instruction in instructions
+function part1(input::Array)
+    for instruction in input
         operation, distance = parseInstruction(instruction)
         executeOperation(operation, distance)
     end
@@ -28,7 +26,7 @@ function parseInstruction(instruction::AbstractString)
 end
 
 function executeOperation(operation::Function, distance::Int)
-    global dial = operation(dial, distance)
+    global dial = operation(dial, distance) % 100
 
     if 0 < dial < 100
         return

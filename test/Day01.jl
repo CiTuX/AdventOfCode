@@ -1,6 +1,6 @@
 using .Day01
 
-const input = """
+const input = split("""
 L68
 L30
 R48
@@ -10,8 +10,7 @@ L55
 L1
 L99
 R14
-L82
-"""
+L82""", '\n')
 
 @testset "Day01 Tests" begin
     @test Day01.part1(input) == 3
