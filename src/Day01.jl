@@ -1,7 +1,6 @@
 module Day01
 
 using Match
-export part1
 
 dial = 50
 counter = 0
@@ -13,6 +12,10 @@ function part1(input::Array)
     end
 
     counter
+end
+
+function part2(input::Array)
+    length(input)
 end
 
 function parseInstruction(instruction::AbstractString)
