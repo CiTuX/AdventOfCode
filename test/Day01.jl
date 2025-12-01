@@ -1,4 +1,4 @@
-using .Day01
+using AdventOfCode.Day01
 
 const input = split("""
 L68
