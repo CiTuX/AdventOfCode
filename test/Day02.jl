@@ -4,4 +4,5 @@ const input = ["11-22,95-115,998-1012,1188511880-1188511890,222220-222224,169852
 
 @testset "Day02 Tests" begin
     @test Day02.part1(input) == 1227775554
+    @test Day02.part2(input) == 4174379265
 end
