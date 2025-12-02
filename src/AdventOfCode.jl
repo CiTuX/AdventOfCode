@@ -3,6 +3,7 @@ module AdventOfCode
 export main
 
 include("Day01.jl")
+include("Day02.jl")
 
 function (@main)(args)
     prefix = if length(args) == 0
