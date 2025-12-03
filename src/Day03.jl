@@ -3,31 +3,43 @@ module Day03
 const orderedJolts = map(string, 9:-1:1)
 
 part1(input::Array) = handleInput(input)
-part2(input::Array) = length(input)
+part2(input::Array) = handleInput(input, 12)
 
-function handleInput(banks::Array)
+function handleInput(banks::Array, batteries::Int=2)
     total = 0
     for bank in banks
-        total += calculateMaxJoltage(bank)
+        total += calculateMaxJoltage(bank, batteries)
     end
     total
 end
 
-function calculateMaxJoltage(bank::AbstractString)
-    firstIndex = findHighestJolt(bank)
-    secondIndex = findHighestJolt(bank, firstIndex + 1)
-    joltage = bank[firstIndex] * bank[secondIndex]
-    parse(Int, joltage)
-end
+function calculateMaxJoltage(bank::AbstractString, batteries::Integer)
+    bankLength = length(bank)
+    joltage = 0
+    start = 1
+    remaining = batteries
 
-function findHighestJolt(bank::AbstractString, nextIndex::Integer=1)
-    for jolt in orderedJolts
-        index = findnext(jolt, bank, nextIndex)
-        if index !== nothing && (nextIndex != 1 || length(bank) > index[1])
-            return index[1]
+    while remaining > 0
+        endpos = bankLength - (remaining - 1)
+        bestDigit = -1
+        bestPosition = start
+
+        for position in start:endpos
+            digit = parse(Int, bank[position])
+            if digit > bestDigit
+                bestDigit = digit
+                bestPosition = position
+                if bestDigit == 9
+                    break
+                end
+            end
         end
+
+        joltage = joltage * 10 + bestDigit
+        start = bestPosition + 1
+        remaining -= 1
     end
-    0
+    joltage
 end
 
 end
