@@ -5,6 +5,7 @@ export main
 include("Day01.jl")
 include("Day02.jl")
 include("Day03.jl")
+include("Day04.jl")
 
 function (@main)(args)
     prefix = if length(args) == 0
