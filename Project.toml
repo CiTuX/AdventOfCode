@@ -1,13 +1,15 @@
 name = "AdventOfCode"
 uuid = "b15b3531-00fd-4bdc-993b-20f9464a0bed"
-authors = ["Paul Stöhr"]
 version = "0.1.0"
-
-[deps]
-Match = "7eb4fadd-790c-5f42-8a69-bfa0b872bfbf"
-
-[compat]
-Match = "2.4.1"
+authors = ["Paul Stöhr"]
 
 [workspace]
 projects = ["test"]
+
+[deps]
+DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+Match = "7eb4fadd-790c-5f42-8a69-bfa0b872bfbf"
+
+[compat]
+DSP = "0.8.4"
+Match = "2.4.1"
