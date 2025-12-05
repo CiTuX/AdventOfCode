@@ -1,8 +1,9 @@
 using Test
 
+import AdventOfCode
+
 @testset "AdventOfCode Tests" begin
-    include("Day01.jl")
-    include("Day02.jl")
-    include("Day03.jl")
-    include("Day04.jl")
+    for day in readdir(@__DIR__) |> filter(file -> startswith(file, AdventOfCode.prefix))
+        include(day)
+    end
 end
