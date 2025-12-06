@@ -8,4 +8,5 @@ const input = split("""
 
 @testset "Day06 Tests" begin
     @test Day06.part1(input) == 4277556
+    @test Day06.part2(input) == 3263827
 end
