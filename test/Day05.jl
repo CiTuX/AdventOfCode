@@ -1,3 +1,4 @@
+using Test
 using AdventOfCode.Day05
 
 const input = split("""
