@@ -9,13 +9,10 @@ part2(input::Array) = handle_input(input)
 function handle_input(input::Array)
     tachyons = BitMatrix(undef, 1, length(input[1]))
     counter = 0
+    startIndex = findfirst(startmarker, input[1])
+    tachyons[startIndex] = true
     for line in input
-        if sum(tachyons) == 0
-            startIndex = findfirst(startmarker, line)
-            tachyons[startIndex] = true
-        else
-            counter += collision_detection!(tachyons, line)
-        end
+        counter += collision_detection!(tachyons, line)
     end
     counter
 end
