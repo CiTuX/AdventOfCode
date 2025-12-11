@@ -21,4 +21,5 @@ const input = split("""
 
 @testset "Day07 Tests" begin
     @test Day07.part1(input) == 21
+    @test Day07.part2(input) == 40
 end
